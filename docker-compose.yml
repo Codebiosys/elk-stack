@@ -1,0 +1,65 @@
+version: "3"
+
+services:
+
+  www:
+    build: ./www
+    ports:
+      - "80:80"
+
+  logspout:
+    build: ./logspout
+    restart: always
+    depends_on:
+      - logstash
+    environment:
+      - ROUTE_URIS=logstash://logstash:5000
+      - LOGSTASH_TAGS=docker-elk
+      - SYSLOG_FORMAT=rfc3164
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  elasticsearch:
+    build : ./elasticsearch
+    restart: always
+    environment:
+      - LOGSPOUT=ignore
+      - "ES_JAVA_OPTS=-Xmx256m -Xms256m"
+    expose:
+      - 9200
+      - 9300
+    volumes:
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - elasticsearch:/usr/share/elasticsearch/data
+
+  logstash:
+    build: ./logstash
+    restart: always
+    environment:
+      - LOGSPOUT=ignore
+      - DROP_NON_JSON=false
+      - "xpack.security.enabled=false"
+      - "LS_JAVA_OPTS=-Xmx256m -Xms256m"
+    expose:
+      - 5000
+    depends_on:
+      - elasticsearch
+    volumes:
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
+
+  kibana:
+    build: ./kibana
+    restart: always
+    environment:
+      - LOGSPOUT=ignore
+      - "xpack.security.enabled=false"
+    depends_on:
+      - elasticsearch
+    ports:
+      - "5601:5601"
+    volumes:
+      - ./kibana/config/:/usr/share/kibana/config:ro
+
+volumes:
+  elasticsearch:
