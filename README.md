@@ -59,19 +59,19 @@ You can also install each service via Github link instead of a local directory. 
 services:
 
   elasticsearch:
-    build: https://YOURGITKEY:@github.com/Codebiosys/elk-stack.git.git#master:elasticsearch
+    build: https://github.com/Codebiosys/elk-stack.git.git#master:elasticsearch
     ...
 
   logspout:
-    build: https://YOURGITKEY:@github.com/Codebiosys/elk-stack.git.git#master:logspout
+    build: https://github.com/Codebiosys/elk-stack.git.git#master:logspout
     ...
 
   logstash:
-    build: https://YOURGITKEY:@github.com/Codebiosys/elk-stack.git.git#master:logstash
+    build: https://github.com/Codebiosys/elk-stack.git.git#master:logstash
     ...
 
   kibana:
-    build: https://YOURGITKEY:@github.com/Codebiosys/elk-stack.git.git#master:kibana
+    build: https://github.com/Codebiosys/elk-stack.git.git#master:kibana
     ...
 
 ```
